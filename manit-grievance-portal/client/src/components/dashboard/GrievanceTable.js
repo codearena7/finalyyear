@@ -72,11 +72,20 @@ const getStatusInfo = (status) => {
 };
 
 const formatDate = (date) => {
-    return new Date(date).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-    });
+    if (!date) return 'N/A';
+    try {
+        return new Date(date).toLocaleString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true
+        });
+    } catch (error) {
+        console.error('Date formatting error:', error);
+        return 'Invalid Date';
+    }
 };
 
 const MobileGrievanceCard = ({ grievance, onView }) => {
@@ -86,19 +95,20 @@ const MobileGrievanceCard = ({ grievance, onView }) => {
         <Card sx={{ 
             mb: 2, 
             borderRadius: 2,
-            transition: 'transform 0.2s',
+            transition: 'transform 0.2s, box-shadow 0.2s',
+            border: '1px solid rgba(224, 224, 224, 0.5)',
             '&:hover': {
                 transform: 'translateY(-2px)',
-                boxShadow: '0 4px 8px rgba(0,0,0,0.1)'
+                boxShadow: '0 4px 16px rgba(0,0,0,0.08)'
             }
         }}>
             <CardContent>
                 <Grid container spacing={2}>
                     <Grid item xs={12}>
-                        <Typography variant="h6" component="div" noWrap>
+                        <Typography variant="h6" component="div" noWrap fontWeight="500" sx={{ color: '#1E3A8A' }}>
                             {grievance.title}
                         </Typography>
-                        <Typography variant="body2" color="text.secondary" gutterBottom>
+                        <Typography variant="caption" color="text.secondary" gutterBottom sx={{ letterSpacing: '0.01em' }}>
                             ID: {grievance._id.substring(0, 8)}...
                         </Typography>
                     </Grid>
@@ -117,7 +127,14 @@ const MobileGrievanceCard = ({ grievance, onView }) => {
                             Submitted By
                         </Typography>
                         <Typography variant="body1">
-                            {grievance.user?.name || 'N/A'}
+                            {grievance.submittedBy ? (
+                                <>
+                                    {grievance.submittedBy.name}
+                                    <Typography variant="caption" display="block" color="text.secondary">
+                                        {grievance.submittedBy.email}
+                                    </Typography>
+                                </>
+                            ) : 'N/A'}
                         </Typography>
                     </Grid>
                     
@@ -126,7 +143,7 @@ const MobileGrievanceCard = ({ grievance, onView }) => {
                             Date
                         </Typography>
                         <Typography variant="body1">
-                            {formatDate(grievance.date)}
+                            {formatDate(grievance.createdAt)}
                         </Typography>
                     </Grid>
                     
@@ -216,19 +233,19 @@ const GrievanceTable = ({ grievances }) => {
     }
 
     return (
-        <Paper elevation={2} sx={{ overflow: 'hidden' }}>
+        <Paper elevation={2} sx={{ overflow: 'hidden', borderRadius: 2 }}>
             <TableContainer>
-                <Table>
+                <Table sx={{ minWidth: 650 }}>
                     <TableHead>
-                        <TableRow>
-                            <TableCell>ID</TableCell>
-                            <TableCell>Title</TableCell>
-                            <TableCell>Department</TableCell>
-                            <TableCell>Submitted By</TableCell>
-                            <TableCell>Status</TableCell>
-                            <TableCell>Progress</TableCell>
-                            <TableCell>Date</TableCell>
-                            <TableCell align="center">Actions</TableCell>
+                        <TableRow sx={{ backgroundColor: 'rgba(30, 58, 138, 0.04)' }}>
+                            <TableCell sx={{ fontWeight: 600, py: 2 }}>ID</TableCell>
+                            <TableCell sx={{ fontWeight: 600, py: 2 }}>Title</TableCell>
+                            <TableCell sx={{ fontWeight: 600, py: 2 }}>Department</TableCell>
+                            <TableCell sx={{ fontWeight: 600, py: 2 }}>Submitted By</TableCell>
+                            <TableCell sx={{ fontWeight: 600, py: 2 }}>Status</TableCell>
+                            <TableCell sx={{ fontWeight: 600, py: 2 }}>Progress</TableCell>
+                            <TableCell sx={{ fontWeight: 600, py: 2 }}>Date</TableCell>
+                            <TableCell align="center" sx={{ fontWeight: 600, py: 2 }}>Actions</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -239,9 +256,13 @@ const GrievanceTable = ({ grievances }) => {
                                 return (
                                     <TableRow key={grievance._id} sx={{ 
                                         '&:hover': { 
-                                            backgroundColor: '#F3F4F6',
+                                            backgroundColor: 'rgba(59, 130, 246, 0.04)',
                                             cursor: 'pointer' 
-                                        }
+                                        },
+                                        '&:nth-of-type(odd)': {
+                                            backgroundColor: 'rgba(249, 250, 251, 0.8)',
+                                        },
+                                        borderBottom: '1px solid rgba(224, 224, 224, 0.5)'
                                     }}>
                                         <TableCell>
                                             {grievance._id.substring(0, 8)}...
@@ -249,7 +270,14 @@ const GrievanceTable = ({ grievances }) => {
                                         <TableCell>{grievance.title}</TableCell>
                                         <TableCell>{grievance.department}</TableCell>
                                         <TableCell>
-                                            {grievance.user?.name || 'N/A'}
+                                            {grievance.submittedBy ? (
+                                                <>
+                                                    {grievance.submittedBy.name}
+                                                    <Typography variant="caption" display="block" color="text.secondary">
+                                                        {grievance.submittedBy.email}
+                                                    </Typography>
+                                                </>
+                                            ) : 'N/A'}
                                         </TableCell>
                                         <TableCell>
                                             <Chip
@@ -277,7 +305,7 @@ const GrievanceTable = ({ grievances }) => {
                                             </Box>
                                         </TableCell>
                                         <TableCell>
-                                            {formatDate(grievance.date)}
+                                            {formatDate(grievance.createdAt)}
                                         </TableCell>
                                         <TableCell align="center">
                                             <Tooltip title="View Details">

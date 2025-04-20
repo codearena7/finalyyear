@@ -11,7 +11,8 @@ import {
     Alert,
     useTheme,
     useMediaQuery,
-    Divider
+    Divider,
+    Avatar
 } from '@mui/material';
 import { Add as AddIcon, Dashboard as DashboardIcon } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
@@ -19,6 +20,7 @@ import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import DashboardStats from '../components/dashboard/DashboardStats';
 import GrievanceTable from '../components/dashboard/GrievanceTable';
+import manitLogo from '../assets/images/manit-logo.svg';
 
 // Status color mapping for different grievance statuses
 const statusColors = {
@@ -112,7 +114,18 @@ const Dashboard = () => {
             >
                 <Box display="flex" flexDirection={isMobile ? 'column' : 'row'} justifyContent="space-between" alignItems={isMobile ? 'flex-start' : 'center'} gap={2}>
                     <Box display="flex" alignItems="center">
-                        <DashboardIcon sx={{ fontSize: 32, mr: 2 }} />
+                        <Avatar 
+                            src={manitLogo} 
+                            alt="MANIT Logo" 
+                            sx={{ 
+                                width: 48, 
+                                height: 48, 
+                                mr: 2,
+                                bgcolor: 'white',
+                                p: 0.5,
+                                boxShadow: '0 0 0 2px rgba(255,255,255,0.5)'
+                            }} 
+                        />
                         <Typography variant="h4" component="h1" fontWeight="600">
                             {getRoleTitle()}
                         </Typography>

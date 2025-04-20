@@ -18,10 +18,12 @@ const StatCard = ({ title, value, icon, color, percentage = 0 }) => (
     <Paper elevation={2} sx={{ 
         p: 3, 
         height: '100%', 
+        borderRadius: 2,
         transition: 'transform 0.2s, box-shadow 0.2s',
+        border: '1px solid rgba(224, 224, 224, 0.5)',
         '&:hover': {
             transform: 'translateY(-4px)',
-            boxShadow: '0 8px 16px rgba(0,0,0,0.1)'
+            boxShadow: '0 8px 16px rgba(0,0,0,0.08)'
         }
     }}>
         <Box display="flex" alignItems="center" mb={1.5}>
@@ -38,10 +40,10 @@ const StatCard = ({ title, value, icon, color, percentage = 0 }) => (
                 {icon}
             </Box>
             <Box flexGrow={1}>
-                <Typography variant="h6" component="div" fontWeight="600">
+                <Typography variant="h6" component="div" fontWeight="600" sx={{ color: '#1E3A8A' }}>
                     {value}
                 </Typography>
-                <Typography variant="body2" color="text.secondary">
+                <Typography variant="subtitle2" color="text.secondary" sx={{ letterSpacing: '0.01em' }}>
                     {title}
                 </Typography>
             </Box>
