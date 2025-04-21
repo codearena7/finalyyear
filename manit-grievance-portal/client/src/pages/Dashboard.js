@@ -20,6 +20,7 @@ import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import DashboardStats from '../components/dashboard/DashboardStats';
 import GrievanceTable from '../components/dashboard/GrievanceTable';
+import AdminActivityDashboard from '../components/dashboard/AdminActivityDashboard';
 import manitLogo from '../assets/images/manit-logo.svg';
 
 // Status color mapping for different grievance statuses
@@ -100,6 +101,9 @@ const Dashboard = () => {
         );
     }
 
+    // Check if user is an admin (department_admin, hod, or director)    
+    const isAdmin = ['department_admin', 'hod', 'director'].includes(user?.role);
+
     return (
         <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
             <Paper 
@@ -153,6 +157,15 @@ const Dashboard = () => {
             </Paper>
 
             <DashboardStats grievances={grievances} loading={loading} />
+
+            {/* Render Admin Activity Dashboard for admin users */}
+            {isAdmin && (
+                <AdminActivityDashboard 
+                    grievances={grievances} 
+                    users={[]} // This would be populated with users data if available
+                    loading={loading} 
+                />
+            )}
 
             <Paper sx={{ mb: 4, borderRadius: 2, overflow: 'hidden' }}>
                 <Tabs
